@@ -49,6 +49,11 @@ public class BAPIClient {
         return result;
     }
 
+    /**
+     * 实现API key认证
+     * @param body
+     * @return
+     */
     private Map<String, String> getHeaderMap(String body) {
         Map<String, String> hashMap = new HashMap<>();
         hashMap.put("accessKey", accessKey);
@@ -57,10 +62,16 @@ public class BAPIClient {
         hashMap.put("nonce", RandomUtil.randomNumbers(4));
         hashMap.put("body", body);
         hashMap.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
+        // 对密钥进行签名
         hashMap.put("sign", genSign(body, secretKey));
         return hashMap;
     }
 
+    /**
+     * 实现RestFul请求，并将签名封装在请求头Header中
+     * @param user
+     * @return
+     */
     public String getUsernameByPost(User user) {
         String json = JSONUtil.toJsonStr(user);
         HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
